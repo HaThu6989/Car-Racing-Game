@@ -1,87 +1,40 @@
-const score = document.querySelector('.score');
-const startBtn = document.querySelector('.startBtn');
-const gameArea = document.querySelector('.gameArea');
+let score = document.querySelector('.score');
 
+let startBtn = document.querySelector('.startBtn');
 startBtn.addEventListener('click', start);
+
+let gameArea = document.querySelector('.gameArea');
 
 let carPlayer = { speed: 6 }
 
+
+
 /*** Arrow keys ***/
-let keys = {
-  ArrowUp: false,
-  ArrowDown: false,
-  ArrowLeft: false,
-  ArrowRight: false,
-}
+let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false }
 
 document.addEventListener('keydown', keyDown);
 document.addEventListener('keyup', keyUp);
 
-function keyDown(e) {
-  e.preventDefault();
-  console.log(e.key)//ArrowUp ArrowDown f d z a ...
-  keys[e.key] = true;//change false => true
-  console.log(keys);
+function keyDown(event) {
+  keys[event.key] = true;
 };
 
-function keyUp(e) {
-  e.preventDefault();
-  keys[e.key] = false;//change true => false
+function keyUp(event) {
+  keys[event.key] = false;
 };
 
 
-/*** Make rivalCars moving automatic - random multi-position ***/
-function rivalCars() {
-  let rivalCars = document.querySelectorAll('.rivalCars');
 
-  rivalCars.forEach(item => {
-    if (item.y > 700) {
-      item.y = -300; //to reappear rivalCars
-      item.style.left = Math.floor(Math.random() * 350) + 'px'; //random - position x of rivalCars between 350px
-    }
-    item.y += carPlayer.speed;
-    // console.log(item.y);
-    item.style.top = item.y + 'px';
-  })
-}
-
-
-function runGame() {
-
-  let car = document.querySelector('.car');
-  let sizeGameArea = gameArea.getBoundingClientRect();
-  // console.log(sizeGameArea)
-  // DOMRect {x: 220, y: 0, left: 220, width: 400, height: 745.6000366210938, top: 0, bottom: 745.6000366210938, width: 400...}
-  // y = top , x = left
-
-
-  //Condition to move carPlayer
-  if (carPlayer.start) {
-    rivalCars();
-
-    if (keys.ArrowUp && carPlayer.y > sizeGameArea.top) { carPlayer.y -= carPlayer.speed };//sizeGameArea.top = 0
-    if (keys.ArrowDown && carPlayer.y < (sizeGameArea.bottom - 80)) { carPlayer.y += carPlayer.speed }; //class='car': height = 80
-    if (keys.ArrowLeft && carPlayer.x > 0) { carPlayer.x -= carPlayer.speed }; // DOMRect y = 0
-    if (keys.ArrowRight && carPlayer.x < (sizeGameArea.width - 50)) { carPlayer.x += carPlayer.speed }; //class='car': width = 50
-
-    //carPlayer : <div class="car" style = "left: 0px; top: 546px"></div> 
-    car.style.left = carPlayer.x + 'px';
-    car.style.top = carPlayer.y + 'px';
-    // console.log(car.style.left);//0px
-    // console.log(car.style.top);//546px
-
-    window.requestAnimationFrame(runGame);
-  }
-
-}
-
+/*** Start game ***/
 function start() {
-  gameArea.classList.remove('hide');
+
   startBtn.classList.add('hide');
+  // gameArea.innerHTML = '';
+  gameArea.classList.remove('hide');
 
   carPlayer.start = true;
-
-  window.requestAnimationFrame(runGame);
+  window.requestAnimationFrame(runCars);
+  // window.setInterval(runCars, 1000 / 60)
 
   //<div class="car"></div>
   let car = document.createElement('div');
@@ -90,22 +43,78 @@ function start() {
 
   //offsetLeft, offsetTop : upper left/top corner of class CAR to the left/to within the class parent GAMEAREA.
   carPlayer.x = car.offsetLeft;
-  // console.log(carPlayer.x)//0
   carPlayer.y = car.offsetTop;
-  // console.log(carPlayer.y)//546
-
-  /*** Create 3 rival cars ***/
-  //<div class="rivalCars" style = "left: ...px; top: ...px"></div> => rivalCars
-  for (x = 0; x < 3; x++) {
-    let rivalCars = document.createElement('div');
-    rivalCars.setAttribute('class', 'rivalCars');
-
-    rivalCars.y = (x * 350) // rivalCars distance 350
-    // console.log(rivalCars.y);// 0 350 700
-    rivalCars.style.top = rivalCars.y + 'px';
-
-    gameArea.appendChild(rivalCars);
-  }
-
+  // console.log(carPlayer.x, carPlayer.y)//0 546 because 746-(80+120)
 }
 
+
+
+/*** Run cars ***/
+function runCars() {
+  let carPlayerElm = document.querySelector('.car');
+  let sizeGameArea = gameArea.getBoundingClientRect();
+  // DOMRect {x: 220, y: 0, left: 220, width: 400, height: 745.6000366210938, top: 0, bottom: 745.6000366210938, width: 400...}
+
+  if (carPlayer.start) {
+    rivalCarsMoving(carPlayerElm);
+
+    if (keys.ArrowUp && carPlayer.y > sizeGameArea.top) { carPlayer.y -= carPlayer.speed };
+    if (keys.ArrowDown && carPlayer.y < (sizeGameArea.bottom - 80)) { carPlayer.y += carPlayer.speed }; //class="car": height = 80
+    if (keys.ArrowLeft && carPlayer.x > sizeGameArea.y) { carPlayer.x -= carPlayer.speed };
+    if (keys.ArrowRight && carPlayer.x < (sizeGameArea.width - 50)) { carPlayer.x += carPlayer.speed }; //class="car": width = 50
+
+    //carPlayer : <div class="car" style = "left: 0px; top: 546px"></div> 
+    carPlayerElm.style.left = carPlayer.x + 'px';
+    carPlayerElm.style.top = carPlayer.y + 'px';
+
+    window.requestAnimationFrame(runCars)
+  }
+}
+
+
+
+/*** Create 3 rival cars ***/
+//rivalCars : <div class="rivalCars" style = "left: ...px; top: ...px"></div>
+for (i = 0; i < 3; i++) {
+  let rivalCars = document.createElement('div');
+  rivalCars.setAttribute('class', 'rivalCars');
+  gameArea.appendChild(rivalCars);
+  rivalCars.y = (i * 350) // 0 350 700
+  rivalCars.style.top = rivalCars.y + 'px';
+}
+
+/*** Make rival cars moving ***/
+function rivalCarsMoving(carPlayerElm) {
+  let enemy = document.querySelectorAll('.rivalCars');
+  enemy.forEach(item => {
+    if (detectCollision(carPlayerElm, item)) {
+      console.log('Game over');
+      endGame();
+    };
+
+    if (item.y > 700) {
+      item.y = -300; //to reappear rivalCars
+      item.style.left = Math.floor(Math.random() * 350) + 'px';
+    }
+    item.y += carPlayer.speed;
+    item.style.top = item.y + 'px';
+  })
+}
+
+
+
+/*** Collision ***/
+function detectCollision(car1, car2) {
+  car1Rect = car1.getBoundingClientRect();
+  car2Rect = car2.getBoundingClientRect();
+  return (car1Rect.x < car2Rect.x + car2Rect.width &&
+    car1Rect.x + car1Rect.width > car2Rect.x &&
+    car1Rect.y < car2Rect.y + car2Rect.height &&
+    car1Rect.height + car1Rect.y > car2Rect.y)
+}
+
+
+/*** Game Over ***/
+function endGame() {
+  carPlayer.start = false;
+}
