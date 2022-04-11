@@ -1,0 +1,62 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.hide {
+  display: none;
+}
+
+.car,
+.rivalCars {
+  width: 50px;
+  height: 80px;
+  position: absolute;
+  bottom: 120px;
+}
+
+.car {
+  background-image: url(../image/car-red.webp);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.gameArea {
+  width: 400px;
+  height: 100vh;
+  background-color: #2c3e50;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+  border-right: 7px dashed #c8d6e5;
+  border-left: 7px dashed #c8d6e5;
+}
+
+.startBtn {
+  background: #2c603c;
+  width: 50%;
+  text-align: center;
+  color: white;
+  font-size: 20px;
+  line-height: 30px;
+  position: absolute;
+  justify-content: center;
+  margin-top: 50vh;
+  margin-left: 50vh;
+  padding: 15px;
+  cursor: pointer;
+  box-shadow: 0 5px 5px #777;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.rivalCars {
+  background-image: url(../image/car-yellow1.webp);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.carGame {
+  width: 100%;
+  height: 100vh;
+  background-color: rgb(255, 234, 127);
+}
