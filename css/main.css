@@ -7,18 +7,34 @@
   display: none;
 }
 
-.car,
+.car {
+  width: 50px;
+  height: 80px;
+  position: absolute;
+  bottom: 120px;
+  background-image: url(../image/car-red.webp);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+
 .rivalCars {
   width: 50px;
   height: 80px;
   position: absolute;
   bottom: 120px;
-}
-
-.car {
-  background-image: url(../image/car-red.webp);
+  left: 200px;
+  background-image: url(../image/car-yellow1.webp);
   background-repeat: no-repeat;
   background-size: 100% 100%;
+}
+
+.roadLine {
+  width: 10px;
+  height: 100px;
+  background-color: white;
+  position: absolute;
+  margin-left: 195px;
 }
 
 .gameArea {
@@ -28,35 +44,55 @@
   margin: auto;
   position: relative;
   overflow: hidden;
-  border-right: 7px dashed #c8d6e5;
-  border-left: 7px dashed #c8d6e5;
+  border-right: dashed #c8d6e5;
+  border-left: dashed #c8d6e5;
 }
 
 .startBtn {
-  background: #2c603c;
-  width: 50%;
+  background: #b5120c;
+  width: 45%;
   text-align: center;
   color: white;
-  font-size: 20px;
-  line-height: 30px;
+  font-size: 25px;
+  line-height: 50px;
   position: absolute;
   justify-content: center;
-  margin-top: 50vh;
-  margin-left: 50vh;
-  padding: 15px;
+  margin-top: 25vh;
+  margin-left: 58vh;
+  padding: 25px;
   cursor: pointer;
   box-shadow: 0 5px 5px #777;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: 'Open Sans', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1vh;
+  word-spacing: 1.5vh;
+  border-radius: 2vh;
 }
 
-.rivalCars {
-  background-image: url(../image/car-yellow1.webp);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+.score {
+  position: absolute;
+  width: 250px;
+  padding: 20px;
+  background: #b5120c;
+  top: 50px;
+  left: 50px;
+  color: white;
+  text-align: center;
+  font-size: 25px;
+  font-family: 'Open Sans', sans-serif;
+  box-shadow: 0 5px 5px #777;
+  text-transform: uppercase;
+  letter-spacing: 0.5vh;
+  word-spacing: 1vh;
+  border-radius: 2vh;
 }
+
+
 
 .carGame {
   width: 100%;
   height: 100vh;
-  background-color: rgb(255, 234, 127);
+  background-image: url(../image/background.jpg);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }

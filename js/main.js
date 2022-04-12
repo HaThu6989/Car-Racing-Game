@@ -1,12 +1,12 @@
 let score = document.querySelector('.score');
-
+let carGame = document.querySelector('.carGame');
 let startBtn = document.querySelector('.startBtn');
+
 startBtn.addEventListener('click', start);
 
 let gameArea = document.querySelector('.gameArea');
 
-let carPlayer = { speed: 6 }
-
+let carPlayer = { speed: 5, score: 0 }
 
 
 /*** Arrow keys ***/
@@ -29,22 +29,41 @@ function keyUp(event) {
 function start() {
 
   startBtn.classList.add('hide');
-  // gameArea.innerHTML = '';
+  score.classList.remove('hide');
   gameArea.classList.remove('hide');
 
   carPlayer.start = true;
+  carPlayer.score = 0;
   window.requestAnimationFrame(runCars);
   // window.setInterval(runCars, 1000 / 60)
 
-  //<div class="car"></div>
+  /*** Create 5 lines in road ***/
+  for (j = 0; j < 5; j++) {
+    let roadLine = document.createElement('div');
+    roadLine.setAttribute('class', 'roadLine');
+    roadLine.y = (j * 150);
+    roadLine.style.top = roadLine.y + 'px';
+    gameArea.appendChild(roadLine);
+  }
+
+  /*** Locate carPlayer ***/
   let car = document.createElement('div');
   car.setAttribute('class', 'car');
   gameArea.appendChild(car);
+  carPlayer.x = car.offsetLeft; //0
+  carPlayer.y = car.offsetTop; //546 because 746-(80+120)
 
-  //offsetLeft, offsetTop : upper left/top corner of class CAR to the left/to within the class parent GAMEAREA.
-  carPlayer.x = car.offsetLeft;
-  carPlayer.y = car.offsetTop;
-  // console.log(carPlayer.x, carPlayer.y)//0 546 because 746-(80+120)
+
+  /*** Create 3 rival cars ***/
+  for (i = 0; i < 3; i++) {
+    let rivalCars = document.createElement('div');
+    rivalCars.setAttribute('class', 'rivalCars');
+    gameArea.appendChild(rivalCars);
+    rivalCars.y = (i * 350) // 0 350 700
+    rivalCars.style.top = rivalCars.y + 'px';
+  }
+
+
 }
 
 
@@ -56,6 +75,7 @@ function runCars() {
   // DOMRect {x: 220, y: 0, left: 220, width: 400, height: 745.6000366210938, top: 0, bottom: 745.6000366210938, width: 400...}
 
   if (carPlayer.start) {
+    linesMoving();
     rivalCarsMoving(carPlayerElm);
 
     if (keys.ArrowUp && carPlayer.y > sizeGameArea.top) { carPlayer.y -= carPlayer.speed };
@@ -67,28 +87,22 @@ function runCars() {
     carPlayerElm.style.left = carPlayer.x + 'px';
     carPlayerElm.style.top = carPlayer.y + 'px';
 
-    window.requestAnimationFrame(runCars)
+    carPlayer.score++;
+    console.log(carPlayer.score);
+    score.innerHTML = `Score : ${carPlayer.score}`
+
+    window.requestAnimationFrame(runCars);
   }
 }
 
 
 
-/*** Create 3 rival cars ***/
-//rivalCars : <div class="rivalCars" style = "left: ...px; top: ...px"></div>
-for (i = 0; i < 3; i++) {
-  let rivalCars = document.createElement('div');
-  rivalCars.setAttribute('class', 'rivalCars');
-  gameArea.appendChild(rivalCars);
-  rivalCars.y = (i * 350) // 0 350 700
-  rivalCars.style.top = rivalCars.y + 'px';
-}
-
 /*** Make rival cars moving ***/
+//rivalCars : <div class="rivalCars" style = "left: ...px; top: ...px"></div>
 function rivalCarsMoving(carPlayerElm) {
-  let enemy = document.querySelectorAll('.rivalCars');
-  enemy.forEach(item => {
+  let rivalCarsElm = document.querySelectorAll('.rivalCars');
+  rivalCarsElm.forEach(item => {
     if (detectCollision(carPlayerElm, item)) {
-      console.log('Game over');
       endGame();
     };
 
@@ -96,6 +110,20 @@ function rivalCarsMoving(carPlayerElm) {
       item.y = -300; //to reappear rivalCars
       item.style.left = Math.floor(Math.random() * 350) + 'px';
     }
+    item.y += carPlayer.speed;
+    item.style.top = item.y + 'px';
+    console.log(item.style.top);
+  })
+}
+
+
+function linesMoving() {
+  let roadLineElm = document.querySelectorAll('.roadLine');
+  roadLineElm.forEach(item => {
+    if (item.y >= 700) {
+      item.y = item.y - 750;
+    }
+
     item.y += carPlayer.speed;
     item.style.top = item.y + 'px';
   })
@@ -117,4 +145,15 @@ function detectCollision(car1, car2) {
 /*** Game Over ***/
 function endGame() {
   carPlayer.start = false;
+  console.log('Game over');
+  startBtn.classList.remove('hide');
+
+  gameArea.classList.add('hide');
+  gameArea.innerHTML = '';
+
+  score.classList.add('hide');
+
+  startBtn.innerHTML = 'Game Over <br> Your score : ' + carPlayer.score + '<br> Click here to Restart';
 }
+
+
