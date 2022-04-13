@@ -44,6 +44,22 @@ function start() {
   window.requestAnimationFrame(runCars);
   // window.setInterval(runCars, 1000 / 60)
 
+  carGame.style.backgroundImage = "url('https://t4.ftcdn.net/jpg/02/41/90/67/360_F_241906786_oqzl8pUTbroCqUHkQRBk6oCVo66v0J8f.jpg')";
+
+  creat()
+
+  /*** Locate carPlayer ***/
+  let car = document.createElement('div');
+  car.setAttribute('class', 'car');
+  gameArea.appendChild(car);
+  carPlayer.x = car.offsetLeft; //0
+  carPlayer.y = car.offsetTop; //546 because 746-(80+120)
+
+}
+
+
+
+function creat() {
   /*** Create 5 coins in road ***/
   for (k = 0; k < 5; k++) {
     let coin = document.createElement('div');
@@ -62,14 +78,6 @@ function start() {
     gameArea.appendChild(roadLine);
   }
 
-  /*** Locate carPlayer ***/
-  let car = document.createElement('div');
-  car.setAttribute('class', 'car');
-  gameArea.appendChild(car);
-  carPlayer.x = car.offsetLeft; //0
-  carPlayer.y = car.offsetTop; //546 because 746-(80+120)
-
-
   /*** Create 3 rival cars ***/
   for (i = 0; i < 3; i++) {
     let rivalCar = document.createElement('div');
@@ -78,8 +86,8 @@ function start() {
     rivalCar.y = (i * 350) // 0 350 700
     rivalCar.style.top = rivalCar.y + 'px';
   }
-}
 
+}
 
 
 /*** Run cars ***/
@@ -114,19 +122,17 @@ function runCars() {
 }
 
 
-
-/*** Make rival cars moving ***/
-//rivalCars : <div class="rivalCars" style = "left: ...px; top: ...px"></div>
+/*** Rival cars moving ***/
 function rivalCarsMoving(carPlayerElm) {
   let rivalCarElm = document.querySelectorAll('.rivalCars');
   rivalCarElm.forEach(item => {
     if (detectCollision(carPlayerElm, item)) {
-      endGame();
+      gameOver();
     };
 
     if (item.y > 700) {
       item.y = -300; //to reappear rivalCars
-      item.style.left = Math.floor(Math.random() * 350) + 'px';
+      item.style.left = Math.floor(Math.random() * 450) + 'px';
     }
     item.y += carPlayer.speed;
     item.style.top = item.y + 'px';
@@ -149,7 +155,7 @@ function linesMoving() {
 }
 
 
-/*** Make coins moving ***/
+/*** Coins moving ***/
 function coinsMoving(carPlayerElm) {
   let coinElm = document.querySelectorAll('.coin');
   let coinBoardElm = document.querySelector('.coinBoard');
@@ -158,13 +164,18 @@ function coinsMoving(carPlayerElm) {
   coinElm.forEach(item => {
     if (detectCollision(carPlayerElm, item)) {
       carPlayer.coinScore++;
-      item.classList.add('hide');
       coinBoardElm.innerHTML = `Coin : ${carPlayer.coinScore}`;
+      item.classList.add('hide');
+
+      setTimeout(function removeHideCoinElm() {
+        item.classList.remove('hide');
+      }, 2000)
+
     };
 
     if (item.y > 700) {
       item.y = -300; //to reappear rivalCars
-      item.style.left = Math.floor(Math.random() * 350) + 'px';
+      item.style.left = Math.floor(Math.random() * 450) + 'px';
     };
 
     item.y += carPlayer.speed;
@@ -174,7 +185,7 @@ function coinsMoving(carPlayerElm) {
 }
 
 
-/*** Collision ***/
+/*** Detect Collision ***/
 function detectCollision(player, obstacle) {
   playerRect = player.getBoundingClientRect();
   obstacleRect = obstacle.getBoundingClientRect();
@@ -185,41 +196,45 @@ function detectCollision(player, obstacle) {
 }
 
 
-
 /*** Level ***/
 function level() {
-  if (carPlayer.score >= 0 && carPlayer.score <= 200) {
-    carPlayer.speed = 9;
+  if (carPlayer.score > 0 && carPlayer.score <= 500) {
+    carPlayer.speed = 8;
     gameLevel.innerHTML = 'Level : 1';
 
-  } else if (carPlayer.score > 200 && carPlayer.score <= 500) {
-    carPlayer.speed = 10;
+  } else if (carPlayer.score > 500 && carPlayer.score <= 800) {
+    carPlayer.speed = 9;
     gameLevel.innerHTML = 'Level : 2';
 
-  } else if (carPlayer.score > 500 && carPlayer.score <= 700) {
-    carPlayer.speed = 11;
+  } else if (carPlayer.score > 800 && carPlayer.score <= 1100) {
+    carPlayer.speed = 10;
     gameLevel.innerHTML = 'Level : 3';
 
-  } else if (carPlayer.score > 700 && carPlayer.score <= 900) {
-    carPlayer.speed = 12;
+  } else if (carPlayer.score > 1100 && carPlayer.score <= 1500) {
+    carPlayer.speed = 11;
     gameLevel.innerHTML = 'Level : 4';
 
-  } else if (carPlayer.score > 900 && carPlayer.score <= 1200) {
-    carPlayer.speed = 13;
+  } else if (carPlayer.score > 1500 && carPlayer.score < 2000) {
+    carPlayer.speed = 12;
     gameLevel.innerHTML = 'Level : 5';
-
-  } else if (carPlayer.score > 1200) {
-    carPlayer.speed = 14;
-    gameLevel.innerHTML = 'Level : 6';
-
+  } else if (carPlayer.score === 2000) {
+    win()
   }
+
+  //Test
+  // if (carPlayer.score > 0 && carPlayer.score < 100) {
+  //   carPlayer.speed = 10;
+  //   gameLevel.innerHTML = 'Level : 4';
+
+  // } else if (carPlayer.score === 100) {
+  //   win()
+  // }
 }
 
 
-/*** Game Over ***/
+/*** End Game ***/
 function endGame() {
   carPlayer.start = false;
-  console.log('Game over');
   startBtn.classList.remove('hide');
 
   gameArea.classList.add('hide');
@@ -228,8 +243,29 @@ function endGame() {
   score.classList.add('hide');
   gameLevel.classList.add('hide');
   coinBoard.classList.add('hide');
-
-  startBtn.innerHTML = ` Game Over <br> Your score : ${carPlayer.score} <br> Your coin : ${carPlayer.coinScore} <br> Click here to Restart`;
 }
 
 
+/*** Game Over ***/
+function gameOver() {
+  endGame()
+
+  carGame.style.backgroundImage = "url('https://community.gamedev.tv/uploads/db2322/original/3X/d/7/d7f31b2eeeb447f06a715afa20e512feb5114a7c.png')";
+  startBtn.style.marginTop = '72vh';
+  startBtn.style.backgroundColor = 'rgb(28, 86, 67)';
+
+  startBtn.innerHTML = `Your score : ${carPlayer.score} <br> Your coin : ${carPlayer.coinScore} <br> Click here to Restart`;
+
+}
+
+
+/*** Win ***/
+function win() {
+  endGame()
+
+  carGame.style.backgroundImage = "url('https://t4.ftcdn.net/jpg/03/59/88/53/360_F_359885319_Poc8GIIxb4fuTXKkfnRxCkdi3xqzhlJx.jpg')";
+  startBtn.style.marginTop = '68vh';
+  startBtn.style.backgroundColor = '#b5120c';
+
+  startBtn.innerHTML = `Your score : ${carPlayer.score} <br> Your coin : ${carPlayer.coinScore} <br> Click here to Restart`;
+}

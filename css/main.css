@@ -31,7 +31,7 @@
   height: 100px;
   background-color: white;
   position: absolute;
-  margin-left: 195px;
+  margin-left: 245px;
 }
 
 .coin {
@@ -46,9 +46,9 @@
 }
 
 .gameArea {
-  width: 400px;
+  width: 500px;
   height: 100vh;
-  background-color: #2c3e50;
+  background-color: #434c54;
   margin: auto;
   position: relative;
   overflow: hidden;
@@ -58,15 +58,15 @@
 
 .startBtn {
   background: #b5120c;
-  width: 45%;
+  width: 40%;
   text-align: center;
   color: white;
   font-size: 25px;
-  line-height: 50px;
+  line-height: 45px;
   position: absolute;
   justify-content: center;
   margin-top: 25vh;
-  margin-left: 58vh;
+  margin-left: 60vh;
   padding: 25px;
   cursor: pointer;
   box-shadow: 0 5px 5px #777;
@@ -75,6 +75,8 @@
   letter-spacing: 1vh;
   word-spacing: 1.5vh;
   border-radius: 2vh;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .score,
