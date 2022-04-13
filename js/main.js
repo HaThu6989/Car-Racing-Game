@@ -1,12 +1,16 @@
-let score = document.querySelector('.score');
+
 let carGame = document.querySelector('.carGame');
 let startBtn = document.querySelector('.startBtn');
-
 startBtn.addEventListener('click', start);
+
+let score = document.querySelector('.score');
+let gameLevel = document.querySelector('.gameLevel');
+
+let coinBoard = document.querySelector('.coinBoard');
 
 let gameArea = document.querySelector('.gameArea');
 
-let carPlayer = { speed: 5, score: 0 }
+let carPlayer = { speed: 0, score: 0, coinScore: 0 }
 
 
 /*** Arrow keys ***/
@@ -30,12 +34,24 @@ function start() {
 
   startBtn.classList.add('hide');
   score.classList.remove('hide');
+  coinBoard.classList.remove('hide');
+  gameLevel.classList.remove('hide');
   gameArea.classList.remove('hide');
 
   carPlayer.start = true;
   carPlayer.score = 0;
+  carPlayer.coinScore = 0;
   window.requestAnimationFrame(runCars);
   // window.setInterval(runCars, 1000 / 60)
+
+  /*** Create 5 coins in road ***/
+  for (k = 0; k < 5; k++) {
+    let coin = document.createElement('div');
+    coin.setAttribute('class', 'coin');
+    coin.y = (k * 150);
+    coin.style.top = coin.y + 'px';
+    gameArea.appendChild(coin);
+  }
 
   /*** Create 5 lines in road ***/
   for (j = 0; j < 5; j++) {
@@ -56,14 +72,12 @@ function start() {
 
   /*** Create 3 rival cars ***/
   for (i = 0; i < 3; i++) {
-    let rivalCars = document.createElement('div');
-    rivalCars.setAttribute('class', 'rivalCars');
-    gameArea.appendChild(rivalCars);
-    rivalCars.y = (i * 350) // 0 350 700
-    rivalCars.style.top = rivalCars.y + 'px';
+    let rivalCar = document.createElement('div');
+    rivalCar.setAttribute('class', 'rivalCars');
+    gameArea.appendChild(rivalCar);
+    rivalCar.y = (i * 350) // 0 350 700
+    rivalCar.style.top = rivalCar.y + 'px';
   }
-
-
 }
 
 
@@ -76,6 +90,7 @@ function runCars() {
 
   if (carPlayer.start) {
     linesMoving();
+    coinsMoving(carPlayerElm);
     rivalCarsMoving(carPlayerElm);
 
     if (keys.ArrowUp && carPlayer.y > sizeGameArea.top) { carPlayer.y -= carPlayer.speed };
@@ -88,8 +103,11 @@ function runCars() {
     carPlayerElm.style.top = carPlayer.y + 'px';
 
     carPlayer.score++;
-    console.log(carPlayer.score);
-    score.innerHTML = `Score : ${carPlayer.score}`
+
+    level();
+
+    score.innerHTML = `Score : ${carPlayer.score}`;
+    // coinBoardElm.innerHTML = `Coin : ${carPlayer.coin}`;
 
     window.requestAnimationFrame(runCars);
   }
@@ -100,8 +118,8 @@ function runCars() {
 /*** Make rival cars moving ***/
 //rivalCars : <div class="rivalCars" style = "left: ...px; top: ...px"></div>
 function rivalCarsMoving(carPlayerElm) {
-  let rivalCarsElm = document.querySelectorAll('.rivalCars');
-  rivalCarsElm.forEach(item => {
+  let rivalCarElm = document.querySelectorAll('.rivalCars');
+  rivalCarElm.forEach(item => {
     if (detectCollision(carPlayerElm, item)) {
       endGame();
     };
@@ -112,11 +130,12 @@ function rivalCarsMoving(carPlayerElm) {
     }
     item.y += carPlayer.speed;
     item.style.top = item.y + 'px';
-    console.log(item.style.top);
+    // console.log(item.style.top);
   })
 }
 
 
+/*** Lines moving ***/
 function linesMoving() {
   let roadLineElm = document.querySelectorAll('.roadLine');
   roadLineElm.forEach(item => {
@@ -130,15 +149,70 @@ function linesMoving() {
 }
 
 
+/*** Make coins moving ***/
+function coinsMoving(carPlayerElm) {
+  let coinElm = document.querySelectorAll('.coin');
+  let coinBoardElm = document.querySelector('.coinBoard');
+
+  coinBoardElm.innerHTML = `Coin : ${carPlayer.coinScore}`;
+  coinElm.forEach(item => {
+    if (detectCollision(carPlayerElm, item)) {
+      carPlayer.coinScore++;
+      item.classList.add('hide');
+      coinBoardElm.innerHTML = `Coin : ${carPlayer.coinScore}`;
+    };
+
+    if (item.y > 700) {
+      item.y = -300; //to reappear rivalCars
+      item.style.left = Math.floor(Math.random() * 350) + 'px';
+    };
+
+    item.y += carPlayer.speed;
+    item.style.top = item.y + 'px';
+    // console.log(item.style.top);
+  })
+}
+
 
 /*** Collision ***/
-function detectCollision(car1, car2) {
-  car1Rect = car1.getBoundingClientRect();
-  car2Rect = car2.getBoundingClientRect();
-  return (car1Rect.x < car2Rect.x + car2Rect.width &&
-    car1Rect.x + car1Rect.width > car2Rect.x &&
-    car1Rect.y < car2Rect.y + car2Rect.height &&
-    car1Rect.height + car1Rect.y > car2Rect.y)
+function detectCollision(player, obstacle) {
+  playerRect = player.getBoundingClientRect();
+  obstacleRect = obstacle.getBoundingClientRect();
+  return (playerRect.x < obstacleRect.x + obstacleRect.width &&
+    playerRect.x + playerRect.width > obstacleRect.x &&
+    playerRect.y < obstacleRect.y + obstacleRect.height &&
+    playerRect.height + playerRect.y > obstacleRect.y)
+}
+
+
+
+/*** Level ***/
+function level() {
+  if (carPlayer.score >= 0 && carPlayer.score <= 200) {
+    carPlayer.speed = 9;
+    gameLevel.innerHTML = 'Level : 1';
+
+  } else if (carPlayer.score > 200 && carPlayer.score <= 500) {
+    carPlayer.speed = 10;
+    gameLevel.innerHTML = 'Level : 2';
+
+  } else if (carPlayer.score > 500 && carPlayer.score <= 700) {
+    carPlayer.speed = 11;
+    gameLevel.innerHTML = 'Level : 3';
+
+  } else if (carPlayer.score > 700 && carPlayer.score <= 900) {
+    carPlayer.speed = 12;
+    gameLevel.innerHTML = 'Level : 4';
+
+  } else if (carPlayer.score > 900 && carPlayer.score <= 1200) {
+    carPlayer.speed = 13;
+    gameLevel.innerHTML = 'Level : 5';
+
+  } else if (carPlayer.score > 1200) {
+    carPlayer.speed = 14;
+    gameLevel.innerHTML = 'Level : 6';
+
+  }
 }
 
 
@@ -152,8 +226,10 @@ function endGame() {
   gameArea.innerHTML = '';
 
   score.classList.add('hide');
+  gameLevel.classList.add('hide');
+  coinBoard.classList.add('hide');
 
-  startBtn.innerHTML = 'Game Over <br> Your score : ' + carPlayer.score + '<br> Click here to Restart';
+  startBtn.innerHTML = ` Game Over <br> Your score : ${carPlayer.score} <br> Your coin : ${carPlayer.coinScore} <br> Click here to Restart`;
 }
 
 

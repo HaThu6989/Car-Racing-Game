@@ -7,26 +7,23 @@
   display: none;
 }
 
-.car {
-  width: 50px;
-  height: 80px;
-  position: absolute;
-  bottom: 120px;
-  background-image: url(../image/car-red.webp);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
-
-
+.car,
 .rivalCars {
   width: 50px;
   height: 80px;
   position: absolute;
   bottom: 120px;
-  left: 200px;
-  background-image: url(../image/car-yellow1.webp);
   background-repeat: no-repeat;
   background-size: 100% 100%;
+}
+
+.car {
+  background-image: url(../image/car-red.webp);
+}
+
+.rivalCars {
+  left: 200px;
+  background-image: url(../image/car-yellow1.webp);
 }
 
 .roadLine {
@@ -35,6 +32,17 @@
   background-color: white;
   position: absolute;
   margin-left: 195px;
+}
+
+.coin {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  bottom: 120px;
+  left: 200px;
+  background-image: url(../image/coin.gif);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .gameArea {
@@ -69,6 +77,25 @@
   border-radius: 2vh;
 }
 
+.score,
+.gameLevel,
+.coinBoard {
+  position: absolute;
+  width: 250px;
+  padding: 20px;
+  background: #b5120c;
+  left: 50px;
+  color: white;
+  text-align: center;
+  font-size: 25px;
+  font-family: 'Open Sans', sans-serif;
+  box-shadow: 0 5px 5px #777;
+  text-transform: uppercase;
+  letter-spacing: 0.5vh;
+  word-spacing: 1vh;
+  border-radius: 2vh;
+}
+
 .score {
   position: absolute;
   width: 250px;
@@ -87,6 +114,13 @@
   border-radius: 2vh;
 }
 
+.gameLevel {
+  top: 200px;
+}
+
+.coinBoard {
+  top: 350px;
+}
 
 
 .carGame {
